@@ -4,13 +4,13 @@ import java.awt.event.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Server extends JFrame implements ActionListener {
+public class Client extends JFrame implements ActionListener {
 
     JTextField text;
     JPanel a1;
     Box vertical = Box.createVerticalBox();
 
-    Server() {
+    Client() {
         setLayout(null);
 
         JPanel p1 = new JPanel();
@@ -33,7 +33,7 @@ public class Server extends JFrame implements ActionListener {
             }
         });
 
-        ImageIcon i4 = new ImageIcon(ClassLoader.getSystemResource("icons/1.png"));
+        ImageIcon i4 = new ImageIcon(ClassLoader.getSystemResource("icons/2.png"));
         Image i5 = i4.getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
         ImageIcon i6 = new ImageIcon(i5);
         JLabel profile = new JLabel(i6);
@@ -61,7 +61,7 @@ public class Server extends JFrame implements ActionListener {
         morevert.setBounds(410, 24, 10, 25);
         p1.add(morevert);
 
-        JLabel name = new JLabel("Harry");
+        JLabel name = new JLabel("Peter");
         name.setBounds(110, 18, 100, 24);
         name.setForeground(Color.WHITE);
         name.setFont(new Font("SAN_SERIF", Font.BOLD, 18));
@@ -158,6 +158,6 @@ public class Server extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        new Server();
+        new Client();
     }
 }
