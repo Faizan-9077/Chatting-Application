@@ -135,6 +135,7 @@ public class Server extends JFrame implements ActionListener {
         text.setText("");
     }
 
+<<<<<<< HEAD
     public static JPanel formatLabel(String out) {
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -157,6 +158,8 @@ public class Server extends JFrame implements ActionListener {
         return panel;
     }
 
+=======
+>>>>>>> 673da3d5688e31b7ee31e6ad147735d45f06c414
     public static void main(String[] args) {
         new Server();
     }
