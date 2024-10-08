@@ -27,3 +27,19 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+# Ignore the out directory
+out/
+
+# Ignore any .class files (Java compiled files)
+*.class
+
+# Ignore IntelliJ or VSCode config files
+.idea/
+.vscode/
+
+# Ignore log files
+*.log
+
+# Ignore any other unwanted files or directories
+*.jar
+*.war

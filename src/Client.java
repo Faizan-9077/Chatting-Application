@@ -1,23 +1,28 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.*;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-public class Client extends JFrame implements ActionListener {
+public class Client implements ActionListener {
 
     JTextField text;
-    JPanel a1;
-    Box vertical = Box.createVerticalBox();
+    static JPanel a1;
+    static Box vertical = Box.createVerticalBox();
+
+    static JFrame f = new JFrame();
+    static DataOutputStream dout;
 
     Client() {
-        setLayout(null);
+        f.setLayout(null);
 
         JPanel p1 = new JPanel();
         p1.setBackground(new Color(7, 94, 84));
         p1.setBounds(0, 0, 450, 70);
         p1.setLayout(null);
-        add(p1);
+        f.add(p1);
 
         ImageIcon i1 = new ImageIcon(ClassLoader.getSystemResource("icons/3.png"));
         Image i2 = i1.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH);
@@ -81,12 +86,12 @@ public class Client extends JFrame implements ActionListener {
         scrollPane.setBounds(0, 71, 450, 590);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        add(scrollPane);
+        f.add(scrollPane);
 
         text = new JTextField();
         text.setBounds(5, 665, 310, 30);
         text.setFont(new Font("SAN-SERIF", Font.PLAIN, 16));
-        add(text);
+        f.add(text);
 
         JButton send = new JButton("Send");
         send.setBounds(330, 664, 100, 30);
@@ -94,45 +99,51 @@ public class Client extends JFrame implements ActionListener {
         send.setForeground(Color.WHITE);
         send.addActionListener(this);
         send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
-        add(send);
+        f.add(send);
 
-        setSize(450, 700);
-        setLocation(200, 50);
-        setUndecorated(true);
-        getContentPane().setBackground(Color.WHITE);
+        f.setSize(450, 700);
+        f.setLocation(800, 50);
+        f.setUndecorated(true);
+        f.getContentPane().setBackground(Color.WHITE);
 
-        setVisible(true);
+        f.setVisible(true);
     }
 
     public void actionPerformed(ActionEvent ae) {
-        String out = text.getText();
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String time = sdf.format(new Date());
+        try {
+            String out = text.getText();
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+            String time = sdf.format(new Date());
 
-        JPanel p2 = formatLabel(out);
+            JPanel p2 = formatLabel(out);
 
-        JPanel right = new JPanel(new BorderLayout());
-        right.add(p2, BorderLayout.LINE_END);
+            JPanel right = new JPanel(new BorderLayout());
+            right.add(p2, BorderLayout.LINE_END);
 
 
-        JPanel timePanel = new JPanel();
-        timePanel.setLayout(new BorderLayout());
-        JLabel timeLabel = new JLabel(time);
-        timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
-        timeLabel.setForeground(Color.GRAY);
-        timePanel.add(timeLabel, BorderLayout.LINE_END);
+            JPanel timePanel = new JPanel();
+            timePanel.setLayout(new BorderLayout());
+            JLabel timeLabel = new JLabel(time);
+            timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+            timeLabel.setForeground(Color.GRAY);
+            timePanel.add(timeLabel, BorderLayout.LINE_END);
 
-        vertical.add(right);
-        vertical.add(timePanel);
-        vertical.add(Box.createVerticalStrut(15));
+            vertical.add(right);
+            vertical.add(timePanel);
+            vertical.add(Box.createVerticalStrut(15));
 
-        a1.add(vertical, BorderLayout.PAGE_START);
+            a1.add(vertical, BorderLayout.PAGE_START);
 
-        repaint();
-        invalidate();
-        validate();
+            dout.writeUTF(out);
 
-        text.setText("");
+            f.repaint();
+            f.invalidate();
+            f.validate();
+
+            text.setText("");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public static JPanel formatLabel(String out) {
@@ -159,5 +170,41 @@ public class Client extends JFrame implements ActionListener {
 
     public static void main(String[] args) {
         new Client();
+
+        try{
+            Socket s = new Socket("127.0.0.1", 6001);
+            DataInputStream din = new DataInputStream(s.getInputStream());
+            dout = new DataOutputStream(s.getOutputStream());
+
+            while(true) {
+                a1.setLayout(new BorderLayout());
+                String msg = din.readUTF();
+
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                String time = sdf.format(new Date());
+
+                JPanel timePanel = new JPanel();
+                timePanel.setLayout(new BorderLayout());
+                JLabel timeLabel = new JLabel(time);
+                timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
+                timeLabel.setForeground(Color.GRAY);
+                timePanel.add(timeLabel, BorderLayout.LINE_START);
+
+
+                JPanel panel = formatLabel(msg);
+                JPanel left = new JPanel(new BorderLayout());
+                left.add(panel, BorderLayout.LINE_START);
+                vertical.add(left);
+
+                vertical.add(Box.createVerticalStrut(15));
+                a1.add(vertical, BorderLayout.PAGE_START);
+
+                f.repaint();
+                f.invalidate();
+                f.validate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
