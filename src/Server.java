@@ -101,6 +101,8 @@ public class Server implements ActionListener {
         send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
         f.add(send);
 
+        text.addActionListener(this);
+
         f.setSize(450, 700);
         f.setLocation(200, 50);
         f.setUndecorated(true);
@@ -171,22 +173,22 @@ public class Server implements ActionListener {
     public static void main(String[] args) {
         new Server();
 
-        try{
+        try {
             ServerSocket skt = new ServerSocket(6001);
-            while(true){
+            while (true) {
                 Socket s = skt.accept();
                 DataInputStream din = new DataInputStream(s.getInputStream());
                 dout = new DataOutputStream(s.getOutputStream());
 
-                while(true) {
+                while (true) {
                     String msg = din.readUTF();
                     JPanel panel = formatLabel(msg);
 
                     SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                     String time = sdf.format(new Date());
 
-                    JPanel timePanel = new JPanel();
-                    timePanel.setLayout(new BorderLayout());
+
+                    JPanel timePanel = new JPanel(new BorderLayout());
                     JLabel timeLabel = new JLabel(time);
                     timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
                     timeLabel.setForeground(Color.GRAY);
@@ -196,12 +198,16 @@ public class Server implements ActionListener {
                     JPanel left = new JPanel(new BorderLayout());
                     left.add(panel, BorderLayout.LINE_START);
                     vertical.add(left);
+                    vertical.add(timePanel);
+
                     f.validate();
+                    f.repaint();
                 }
             }
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }

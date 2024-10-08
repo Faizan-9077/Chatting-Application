@@ -101,6 +101,8 @@ public class Client implements ActionListener {
         send.setFont(new Font("SAN_SERIF", Font.PLAIN, 16));
         f.add(send);
 
+        text.addActionListener(this);
+
         f.setSize(450, 700);
         f.setLocation(800, 50);
         f.setUndecorated(true);
@@ -117,19 +119,26 @@ public class Client implements ActionListener {
 
             JPanel p2 = formatLabel(out);
 
-            JPanel right = new JPanel(new BorderLayout());
-            right.add(p2, BorderLayout.LINE_END);
+
+            JPanel right = new JPanel();
+            right.setLayout(new BoxLayout(right, BoxLayout.Y_AXIS));
 
 
-            JPanel timePanel = new JPanel();
-            timePanel.setLayout(new BorderLayout());
+            JPanel messagePanel = new JPanel(new BorderLayout());
+            messagePanel.add(p2, BorderLayout.LINE_END);
+            right.add(messagePanel); // Add message bubble
+
+
             JLabel timeLabel = new JLabel(time);
             timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
             timeLabel.setForeground(Color.GRAY);
-            timePanel.add(timeLabel, BorderLayout.LINE_END);
+
+
+            JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+            timePanel.add(timeLabel);
+            right.add(timePanel);
 
             vertical.add(right);
-            vertical.add(timePanel);
             vertical.add(Box.createVerticalStrut(15));
 
             a1.add(vertical, BorderLayout.PAGE_START);
@@ -171,32 +180,40 @@ public class Client implements ActionListener {
     public static void main(String[] args) {
         new Client();
 
-        try{
+        try {
             Socket s = new Socket("127.0.0.1", 6001);
             DataInputStream din = new DataInputStream(s.getInputStream());
             dout = new DataOutputStream(s.getOutputStream());
 
-            while(true) {
+            while (true) {
                 a1.setLayout(new BorderLayout());
                 String msg = din.readUTF();
 
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
                 String time = sdf.format(new Date());
 
-                JPanel timePanel = new JPanel();
-                timePanel.setLayout(new BorderLayout());
+                JPanel panel = formatLabel(msg);
+
+
+                JPanel left = new JPanel();
+                left.setLayout(new BoxLayout(left, BoxLayout.Y_AXIS));
+
+                JPanel messagePanel = new JPanel(new BorderLayout());
+                messagePanel.add(panel, BorderLayout.LINE_START);
+                left.add(messagePanel); // Add message bubble
+
                 JLabel timeLabel = new JLabel(time);
                 timeLabel.setFont(new Font("Tahoma", Font.PLAIN, 12));
                 timeLabel.setForeground(Color.GRAY);
-                timePanel.add(timeLabel, BorderLayout.LINE_START);
 
 
-                JPanel panel = formatLabel(msg);
-                JPanel left = new JPanel(new BorderLayout());
-                left.add(panel, BorderLayout.LINE_START);
+                JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+                timePanel.add(timeLabel);
+                left.add(timePanel);
+
                 vertical.add(left);
-
                 vertical.add(Box.createVerticalStrut(15));
+
                 a1.add(vertical, BorderLayout.PAGE_START);
 
                 f.repaint();
